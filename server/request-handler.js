@@ -11,12 +11,18 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var fs = require('fs');
+
 var obj = {
   results: [{
     username: 'Jono',
-    message: 'Do my bidding!'
+    message: 'Do my bidding!',
+    roomname: 'lobby',
+    objectId: 1
   }]
 };
+
+var id = 1;
 
 exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -34,12 +40,15 @@ exports.requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  console.log(request.url);
   // The outgoing status.
   var statusCode;
   if (request.url === '/classes/messages') {
     if (request.method === 'POST') {
       request.on('data', function(data) {
+        id++;
         postParams = JSON.parse(data.toString());
+        postParams.objectId = id;
         obj.results.push(postParams);
       });
       statusCode = 201;
@@ -48,6 +57,10 @@ exports.requestHandler = function(request, response) {
     } else if (request.method === 'OPTIONS') {
       statusCode = 200;
     }
+  } else if (request.url === '/') {
+    statusCode = 200;
+    var data = fs.readFileSync('../client/index.html');
+    response.end(data.toString());
   } else {
     statusCode = 404;
   }
@@ -72,7 +85,6 @@ exports.requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  console.log(obj);
   response.end(JSON.stringify(obj));
 };
 
