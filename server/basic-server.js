@@ -1,6 +1,7 @@
 /* Import node's http module: */
 var http = require('http');
 var handleRequest = require('./request-handler');
+var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();

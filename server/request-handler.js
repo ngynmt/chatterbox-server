@@ -23,7 +23,7 @@ var obj = {
 };
 
 var id = 1;
-
+// var writableStream = fs.createWriteStream('file.txt');
 exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -46,6 +46,9 @@ exports.requestHandler = function(request, response) {
   if (request.url === '/classes/messages') {
     if (request.method === 'POST') {
       request.on('data', function(data) {
+        fs.appendFile('file.txt', data, function(err) {
+          console.log(err);
+        });
         id++;
         postParams = JSON.parse(data.toString());
         postParams.objectId = id;
