@@ -4,7 +4,7 @@ var handleRequest = require('./request-handler');
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
-var results = [{username: 'Billy', message: 'test', roomname: 'lobby', objectId: 0 }];
+var results = [{username: 'Jono', message: 'Do my bidding!', roomname: 'lobby', objectId: 0 }];
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -19,7 +19,7 @@ var port = 3000;
 // For now, since you're running this server on your local machine,
 // we'll have it listen on the IP address 127.0.0.1, which is a
 // special address that always refers to localhost.
-var ip = '127.0.0.1';
+var ip = 'localhost';
 
 app.use(express.static('../client'));
 app.get('/', function(request, response) {
@@ -43,13 +43,12 @@ app.post('/classes/messages', function(request, response) {
     objectId: id
   };
   results.push(result);
-  console.log(result);
   response.status(201).send(JSON.stringify({results: results}));
 });
 
 app.options('/classes/messages', function(request, response) {
   console.log('A options request was made to classes messages');
-  response.end();
+  response.sendStatus(200);
 });
 // We use node's http module to create a server.
 //
