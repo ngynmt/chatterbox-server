@@ -12,10 +12,13 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 var obj = {
-  results: []
+  results: [{
+    username: 'Jono',
+    message: 'Do my bidding!'
+  }]
 };
 
-module.exports = requestHandler = function(request, response) {
+exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -33,14 +36,20 @@ module.exports = requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   // The outgoing status.
   var statusCode;
-  if (request.method === 'POST') {
-    request.on('data', function(data) {
-      postParams = JSON.parse(data.toString());
-      obj.results.push(postParams);
-    });
-    statusCode = 201;
-  } else if (request.method === 'GET') {
-    statusCode = 200;
+  if (request.url === '/classes/messages') {
+    if (request.method === 'POST') {
+      request.on('data', function(data) {
+        postParams = JSON.parse(data.toString());
+        obj.results.push(postParams);
+      });
+      statusCode = 201;
+    } else if (request.method === 'GET') {
+      statusCode = 200;
+    } else if (request.method === 'OPTIONS') {
+      statusCode = 200;
+    }
+  } else {
+    statusCode = 404;
   }
 
   // See the note below about CORS headers.
@@ -63,6 +72,7 @@ module.exports = requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
+  console.log(obj);
   response.end(JSON.stringify(obj));
 };
 
